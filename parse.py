@@ -203,4 +203,4 @@ if __name__ == "__main__":
     )
     buf = io.StringIO()
     fig.savefig(buf, format="svg")
-    st.image(buf.getvalue(), use_container_width=True)
+    st.image(buf.getvalue())
