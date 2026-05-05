@@ -201,7 +201,6 @@ if __name__ == "__main__":
         axs[2],
         threshold=threshold,
     )
-    fig.tight_layout()
     buf = io.StringIO()
     fig.savefig(buf, format="svg")
     st.image(buf.getvalue(), use_container_width=True)
