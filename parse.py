@@ -182,7 +182,7 @@ if __name__ == "__main__":
             axs[2],
             threshold=threshold,
         )
-        st.pyplot(fig)
+        st.pyplot(fig, clear_figure=True, format="svg")
     else:
         if user_input:
             st.error("Access denied")
