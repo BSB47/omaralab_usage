@@ -131,7 +131,7 @@ def plot(
     ax.pie(
         [v for v in data_percent.values()],
         labels=[k if v > 5 else "" for k, v in data_percent.items()],
-        autopct=lambda p: f"{p:.1f}%" if p > 5 else "",
+        autopct=lambda p: f"{p:.1f}%" if p > threshold else "",
     )
     ax.legend(
         [f"{k}: {v:.1f}%" for k, v in zip(data_raw.keys(), data_percent.values())],
