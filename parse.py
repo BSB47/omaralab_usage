@@ -206,7 +206,7 @@ if __name__ == "__main__":
     _, mid_col, _ = st.columns([1, 6, 1])
     with mid_col:
         st.image(buf.getvalue(), use_container_width=True)
-    st.markdown("---")
-    st.markdown(
-    "**Author: Frank, Emily**",
-    )
+        st.markdown("---")
+        st.markdown(
+        "**Author: Frank, Emily**",
+        )
