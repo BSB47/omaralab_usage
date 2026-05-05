@@ -1,4 +1,3 @@
-# Every path must be absolute path because we're running cron jobs
 import re
 from datetime import datetime
 
@@ -148,10 +147,10 @@ if __name__ == "__main__":
     today = datetime.now().strftime("%Y-%m-%d")
 
     setonix_raw_cpu, setonix_percent_cpu, setonix_raw_gpu, setonix_percent_gpu = (
-        parse_setonix_usage(f"/home/yaofu/usage/data/{today}_setonix_usage.txt", today)
+        parse_setonix_usage(f"data/{today}_setonix_usage.txt", today)
     )
     gadi_raw, gadi_percent = parse_gadi_usage(
-        f"/home/yaofu/usage/data/{today}_gadi_usage.txt", today
+        f"data/{today}_gadi_usage.txt", today
     )
 
     fig, axs = plt.subplots(1, 3, figsize=(19.2, 10.8))
