@@ -107,7 +107,14 @@ def parse_gadi_usage(fn: str, time: str):
     return data_raw, data_percent
 
 
-def plot(data_raw: dict, data_percent: dict, today: str, cluster: str, ax):
+def plot(
+    data_raw: dict,
+    data_percent: dict,
+    today: str,
+    cluster: str,
+    ax,
+    threshold: float = 5,
+):
     assert set(data_raw.keys()) == set(
         data_percent.keys()
     ), "Keys of raw data and percentage data must be the same"
@@ -143,19 +150,39 @@ if __name__ == "__main__":
 
     st.set_page_config(layout="wide")
     st.title("Omara lab supercomputer usage")
-    threshold = st.sidebar.slider("Hide slices below %", 0, 20, 5)
-    today = datetime.now().strftime("%Y-%m-%d")
 
-    setonix_raw_cpu, setonix_percent_cpu, setonix_raw_gpu, setonix_percent_gpu = (
-        parse_setonix_usage(f"data/{today}_setonix_usage.txt", today)
-    )
-    gadi_raw, gadi_percent = parse_gadi_usage(
-        f"data/{today}_gadi_usage.txt", today
-    )
+    user_input = st.text_input("Enter Password", type="password")
+    if user_input == st.secrets["password"]:
+        st.success("Access granted")
+        threshold = st.sidebar.slider("Hide slices below %", 0, 20, 5)
+        today = datetime.now().strftime("%Y-%m-%d")
 
-    fig, axs = plt.subplots(1, 3, figsize=(19.2, 10.8))
+        setonix_raw_cpu, setonix_percent_cpu, setonix_raw_gpu, setonix_percent_gpu = (
+            parse_setonix_usage(f"data/{today}_setonix_usage.txt", today)
+        )
+        gadi_raw, gadi_percent = parse_gadi_usage(f"data/{today}_gadi_usage.txt", today)
 
-    plot(gadi_raw, gadi_percent, today, "Gadi", axs[0])
-    plot(setonix_raw_cpu, setonix_percent_cpu, today, "Setonix CPU", axs[1])
-    plot(setonix_raw_gpu, setonix_percent_gpu, today, "Setonix GPU", axs[2])
-    st.pyplot(fig)
+        fig, axs = plt.subplots(1, 3, figsize=(19.2, 10.8))
+
+        plot(gadi_raw, gadi_percent, today, "Gadi", axs[0], threshold=threshold)
+        plot(
+            setonix_raw_cpu,
+            setonix_percent_cpu,
+            today,
+            "Setonix CPU",
+            axs[1],
+            threshold=threshold,
+        )
+        plot(
+            setonix_raw_gpu,
+            setonix_percent_gpu,
+            today,
+            "Setonix GPU",
+            axs[2],
+            threshold=threshold,
+        )
+        st.pyplot(fig)
+    else:
+        if user_input:
+            st.error("Access denied")
+        st.stop()
