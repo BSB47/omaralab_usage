@@ -203,10 +203,11 @@ if __name__ == "__main__":
     )
     buf = io.StringIO()
     fig.savefig(buf, format="svg", bbox_inches="tight")
-    _, mid_col, _ = st.columns([1, 6, 1])
+    _, mid_col, right_col = st.columns([1, 6, 1])
     with mid_col:
         st.image(buf.getvalue(), use_container_width=True)
+    with right_col:
         st.markdown("---")
         st.markdown(
-        "**Author: Frank, Emily**",
+        "**Authors: Frank, Emily**",
         )
