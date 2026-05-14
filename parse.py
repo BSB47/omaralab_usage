@@ -223,7 +223,6 @@ if __name__ == "__main__":
     with mid_col:
         st.image(buf.getvalue(), use_container_width=True)
         st.markdown(
-            f"Authors: Frank, Emily,\
-            Rendering data from {date} (most recent available)"
+            f"Authors: Frank, Emily,  \nRendering data from {date} (most recent available)"
         )
     st.stop()
