@@ -13,4 +13,4 @@ jobs:
     steps:
       - name: Send a request to the Streamlit app
         run: |
-          curl -sI https://your-app-url.streamlit.app | head -n 1
+          curl -sI https://omaralab-usage.streamlit.app/ | head -n 1
