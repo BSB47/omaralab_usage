@@ -1,7 +1,11 @@
+import matplotlib.patches as mpatches
 import re
 from datetime import datetime, timedelta
 
 import matplotlib.pyplot as plt
+import matplotlib.ticker as ticker
+import numpy as np
+import pandas as pd
 
 
 def parse_setonix_usage(fn: str):
@@ -106,6 +110,76 @@ def parse_gadi_usage(fn: str):
     return data_raw, data_percent
 
 
+def plot_history(date_range: tuple[str, str], cluster: str, ax):
+    assert cluster in [
+        "SetonixCPU",
+        "SetonixGPU",
+        "Gadi",
+    ], "Cluster must be one of SetonixCPU, SetonixGPU, Gadi"
+    start_date, end_date = (v.split("-") for v in date_range)
+    start_date = datetime(*map(int, start_date))
+    end_date = datetime(*map(int, end_date))
+    date_list = [
+        (start_date + timedelta(days=x)).strftime("%Y-%m-%d")
+        for x in range((end_date - start_date).days + 1)
+    ]
+
+    date_dicts = {}
+    parse_fn = parse_setonix_usage if "Setonix" in cluster else parse_gadi_usage
+    indices_of_percent_used = 1 if cluster in ["SetonixCPU", "Gadi"] else 3
+    base_cluster = cluster
+    for date in date_list:
+        if "Setonix" in cluster:
+            base_cluster = "Setonix"
+        try:
+            date_dicts[date] = parse_fn(
+                f"/home/yaofu/usage/data/{date}_{base_cluster.lower()}_usage.txt"
+            )[indices_of_percent_used]
+        except FileNotFoundError:
+            continue
+
+    date_with_max_keys = max(date_dicts.keys(), key=lambda d: len(date_dicts[d].keys()))
+    data_arr = np.zeros(
+        (
+            len(date_dicts.keys()),
+            len(date_dicts[date_with_max_keys].keys()),
+        )
+    )
+    for i, date in enumerate(date_dicts.keys()):
+        to_assign = []
+        for key in date_dicts[date_with_max_keys].keys():
+            if key in date_dicts[date].keys():
+                to_assign.append(date_dicts[date][key])
+            else:
+                to_assign.append(np.nan)
+        data_arr[i] = to_assign
+    data_df = pd.DataFrame(
+        data_arr,
+        columns=date_dicts[date_with_max_keys].keys(),
+        index=date_dicts.keys(),
+    )
+    data_df.drop(columns="remaining").plot.line(ax=ax)
+    ax.set_title(f"$\\mathbf{{{cluster}}}$", pad=20)
+    ax.set_xticks(ticks=range(0, len(data_df.index), 5), labels=data_df.index[::5])
+    ax.set_yscale("log")
+    ax.legend(
+        handles=[
+            mpatches.Patch(color=line.get_color(), label=label)
+            for line, label in zip(
+                ax.get_lines(),
+                [
+                    f"{x}: {data_df[x].dropna().iloc[-1]}%"
+                    for x in data_df.columns
+                ],
+            )
+        ],
+        bbox_to_anchor=(0.2, -1.28, 0.5, 1),
+        title="Latest usage (of total allocation)",
+        frameon=False,
+    )
+    ax.yaxis.set_major_formatter(ticker.ScalarFormatter())
+
+
 def plot(
     data_raw: dict,
     data_percent: dict,
@@ -134,7 +208,7 @@ def plot(
     )
     ax.legend(
         [f"{k}: {v:.1f}%" for k, v in zip(data_raw.keys(), data_percent.values())],
-        bbox_to_anchor=(0.3, -1, 0.5, 1),
+        bbox_to_anchor=(0.2, -1, 0.5, 1),
         title="As a percent of total allocation",
         frameon=False,
     )
@@ -161,7 +235,9 @@ if __name__ == "__main__":
                 setonix_raw_gpu,
                 setonix_percent_gpu,
             ) = parse_setonix_usage(f"{path}/data/{date}_setonix_usage.txt")
-            gadi_raw, gadi_percent = parse_gadi_usage(f"{path}/data/{date}_gadi_usage.txt")
+            gadi_raw, gadi_percent = parse_gadi_usage(
+                f"{path}/data/{date}_gadi_usage.txt"
+            )
             break
         except Exception as e:
             if isinstance(e, IndexError):
@@ -172,7 +248,7 @@ if __name__ == "__main__":
                 print(f"No data found for {date}. Trying previous day...")
         rewind += 1
 
-    fig, axs = plt.subplots(1, 3, figsize=(18, 6), dpi=200)
+    fig, axs = plt.subplots(1, 3, figsize=(18, 8), dpi=200)
 
     plot(gadi_raw, gadi_percent, date, "Gadi", axs[0], threshold=threshold)
     plot(
@@ -191,4 +267,14 @@ if __name__ == "__main__":
         axs[2],
         threshold=threshold,
     )
+    plt.tight_layout()
     plt.savefig(f"{path}/plots/{date}_usage.svg", bbox_inches="tight")
+
+    fig, axs = plt.subplots(1, 3, figsize=(18, 9), dpi=200)
+    start_date = (datetime.now() - timedelta(days=15)).strftime("%Y-%m-%d")
+    end_date = datetime.now().strftime("%Y-%m-%d")
+    plot_history((start_date, end_date), "Gadi", axs[0])
+    plot_history((start_date, end_date), "SetonixCPU", axs[1])
+    plot_history((start_date, end_date), "SetonixGPU", axs[2])
+    plt.tight_layout()
+    plt.savefig(f"{path}/plots/history_usage.svg", bbox_inches="tight")

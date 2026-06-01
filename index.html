@@ -50,7 +50,7 @@
     .project-list a { color: #58a6ff; text-decoration: none; font-weight: 500; }
     .project-list a:hover { text-decoration: underline; }
     .project-list .desc { color: #8b949e; font-size: .875rem; margin-top: .15rem; }
-    .footer { margin-top: 2rem; font-size: .8rem; color: #484f58; }
+    .footer { position: fixed; bottom: 1rem; left: 0; right: 0; text-align: center; font-size: .8rem; color: #484f58; z-index: 50; }
     .footer a { color: #58a6ff; text-decoration: none; }
 
     #password-overlay {
@@ -124,11 +124,10 @@
         <div id="plot-container" style="width:100%;margin-top:2rem;"></div>
         <p id="plot-error" style="color:#f85149;display:none;"></p>
       </div>
+  </div>
 
-      <div class="footer">
-        <a href="https://github.com/BSB47/BSB47.github.io">source</a>
-      </div>
-    </div>
+  <div class="footer">
+    <a href="https://github.com/BSB47/BSB47.github.io">source</a>
   </div>
 
   <script>
@@ -158,6 +157,8 @@
       const dateEl = document.getElementById('plot-date');
       const errEl = document.getElementById('plot-error');
       const today = new Date();
+      let dailyUrl = '';
+      let dailyDate = '';
       for (let rewind = 0; rewind < 30; rewind++) {
         const d = new Date(today);
         d.setDate(d.getDate() - rewind);
@@ -170,13 +171,41 @@
           img.src = url;
         });
         if (ok) {
-          container.innerHTML = `<img src="${url}" style="width:100%;height:auto;">`;
-          dateEl.textContent = `Rendering data from ${dateStr} (most recent available)`;
-          return;
+          dailyUrl = url;
+          dailyDate = dateStr;
+          break;
         }
       }
-      errEl.style.display = 'block';
-      errEl.textContent = 'No data found for the last 30 days.';
+      if (!dailyUrl) {
+        errEl.style.display = 'block';
+        errEl.textContent = 'No data found for the last 30 days.';
+        return;
+      }
+
+      const historyUrl = 'plots/history_usage.svg';
+      let showingHistory = false;
+
+      function showDaily() {
+        container.innerHTML = `<img src="${dailyUrl}" style="width:100%;height:auto;cursor:pointer;">`;
+        dateEl.textContent = `Rendering data from ${dailyDate} (most recent available) · click to view history`;
+        showingHistory = false;
+      }
+
+      function showHistory() {
+        container.innerHTML = `<img src="${historyUrl}" style="width:100%;height:auto;cursor:pointer;">`;
+        dateEl.textContent = `Usage over the past 15 days · click to view today`;
+        showingHistory = true;
+      }
+
+      showDaily();
+
+      container.addEventListener('click', () => {
+        if (showingHistory) {
+          showDaily();
+        } else {
+          showHistory();
+        }
+      });
     }
 
     loadPlot();
