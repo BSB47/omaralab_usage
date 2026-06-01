@@ -186,13 +186,13 @@
       let showingHistory = false;
 
       function showDaily() {
-        container.innerHTML = `<img src="${dailyUrl}" style="width:100%;height:auto;cursor:pointer;">`;
+        container.innerHTML = `<img src="${dailyUrl}" style="max-width:100%;height:auto;cursor:pointer;">`;
         dateEl.textContent = `Rendering data from ${dailyDate} (most recent available) · click to view history`;
         showingHistory = false;
       }
 
       function showHistory() {
-        container.innerHTML = `<img src="${historyUrl}" style="width:100%;height:auto;cursor:pointer;">`;
+        container.innerHTML = `<img src="${historyUrl}" style="max-width:100%;height:auto;cursor:pointer;">`;
         dateEl.textContent = `Usage over the past 15 days · click to view today`;
         showingHistory = true;
       }
