@@ -248,7 +248,7 @@ if __name__ == "__main__":
                 print(f"No data found for {date}. Trying previous day...")
         rewind += 1
 
-    fig, axs = plt.subplots(1, 3, figsize=(18, 8), dpi=200)
+    fig, axs = plt.subplots(1, 3, figsize=(18, 8), dpi=100)
 
     plot(gadi_raw, gadi_percent, date, "Gadi", axs[0], threshold=threshold)
     plot(
