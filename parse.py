@@ -1,9 +1,7 @@
-import io
 import re
 from datetime import datetime, timedelta
 
 import matplotlib.pyplot as plt
-import streamlit as st
 
 
 def parse_setonix_usage(fn: str):
@@ -150,34 +148,8 @@ def plot(
 
 if __name__ == "__main__":
 
-    st.set_page_config(layout="wide")
-    st.subheader("Omara lab supercomputer usage", text_alignment="center")
-    login_placeholder = st.empty()
-    threshold = st.sidebar.slider("Hide slices below %", 0, 20, 5)
-
-    if "auth" not in st.session_state:
-        st.session_state.auth = False
-
-    if not st.session_state.auth:
-        # --- LOGIN UI ---
-        _, col2, _ = st.columns([1, 1, 1])
-        with col2:
-            user_input = st.text_input("Enter Password", type="password")
-            if user_input == st.secrets["password"]:
-                st.session_state.auth = True
-                st.success("Access granted")
-                st.rerun()  # Reruns the script to clear the login UI
-            elif user_input:
-                st.error("Access denied")
-        st.stop()  # Prevents anything below from running until auth is True
-
-    # --- ACTUAL APP CONTENT ---
-    # This only runs if st.session_state.auth is True
-    # (Your plotting logic here)
-    col1, col2, col3 = st.columns([1, 1, 1])
-
-    _, mid_col, _ = st.columns([1, 6, 1])
-
+    path = "/home/yaofu/usage/"
+    threshold = 5
     date = str()
     rewind = 0
     while True:
@@ -188,20 +160,16 @@ if __name__ == "__main__":
                 setonix_percent_cpu,
                 setonix_raw_gpu,
                 setonix_percent_gpu,
-            ) = parse_setonix_usage(f"data/{date}_setonix_usage.txt")
-            gadi_raw, gadi_percent = parse_gadi_usage(f"data/{date}_gadi_usage.txt")
+            ) = parse_setonix_usage(f"{path}/data/{date}_setonix_usage.txt")
+            gadi_raw, gadi_percent = parse_gadi_usage(f"{path}/data/{date}_gadi_usage.txt")
             break
         except Exception as e:
             if isinstance(e, IndexError):
-                with mid_col:
-                    st.error(
-                        f"Contents of the data file for {date} is empty or corrupted. \
-                        Supercomputers may be down for maintenance.\
-                        Is it the first Tuesday of the month? If not, contact Frank"
-                    )
+                print(f"Contents of the data file for {date} is empty or corrupted. \
+                Supercomputers may be down for maintenance.\
+                Is it the first Tuesday of the month? If not, contact Frank")
             elif isinstance(e, FileNotFoundError):
-                with mid_col:
-                    st.warning(f"No data found for {date}. Trying previous day...")
+                print(f"No data found for {date}. Trying previous day...")
         rewind += 1
 
     fig, axs = plt.subplots(1, 3, figsize=(18, 6), dpi=200)
@@ -223,11 +191,4 @@ if __name__ == "__main__":
         axs[2],
         threshold=threshold,
     )
-    buf = io.StringIO()
-    fig.savefig(buf, format="svg", bbox_inches="tight")
-    with mid_col:
-        st.image(buf.getvalue(), use_container_width=True)
-        st.markdown(
-            f"Authors: Frank, Emily  \nRendering data from {date} (most recent available)"
-        )
-    st.stop()
+    plt.savefig(f"{path}/plots/{date}_usage.svg", bbox_inches="tight")

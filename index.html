@@ -8,24 +8,19 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: #0d1117;
+      background: #FFFFFF;
       color: #c9d1d9;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      padding: 2rem;
+      padding: 1rem 2rem 2rem 2rem;
     }
     .card {
-      background: #161b22;
-      border: 1px solid #30363d;
-      border-radius: 12px;
-      padding: 3rem 4rem;
-      max-width: 600px;
+      background: #FFFFFF;
+      padding: 1rem 2rem 2rem 2rem;
+      max-width: 1400px;
       width: 100%;
       text-align: center;
-      box-shadow: 0 8px 24px rgba(0,0,0,.4);
     }
     .avatar {
       width: 96px;
@@ -39,11 +34,11 @@
     h1 a:hover { text-decoration: underline; }
     .tagline { color: #8b949e; margin: .5rem 0 1.5rem; font-size: 1rem; }
     .section { margin: 1.5rem 0; }
-    .section h2 {
-      font-size: .85rem;
-      text-transform: uppercase;
-      letter-spacing: .05em;
-      color: #8b949e;
+.section h2 {
+      font-size: 1.25rem;
+      color: #a8a8a8;
+      text-transform: none;
+      letter-spacing: normal;
       margin-bottom: .75rem;
     }
     .project-list { list-style: none; text-align: left; }
@@ -57,27 +52,134 @@
     .project-list .desc { color: #8b949e; font-size: .875rem; margin-top: .15rem; }
     .footer { margin-top: 2rem; font-size: .8rem; color: #484f58; }
     .footer a { color: #58a6ff; text-decoration: none; }
+
+    #password-overlay {
+      position: fixed;
+      inset: 0;
+      background: #FFFFFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+    }
+    #password-overlay .card {
+      max-width: 400px;
+      padding: 2.5rem 3rem;
+    }
+    #password-overlay h2 {
+      font-size: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+    #password-overlay input {
+      width: 100%;
+      padding: .75rem 1rem;
+      background: #FFFFFF;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      color: #c9d1d9;
+      font-size: 1rem;
+      outline: none;
+      margin-bottom: 1rem;
+    }
+    #password-overlay input:focus {
+      border-color: #58a6ff;
+    }
+    #password-overlay button {
+      width: 100%;
+      padding: .75rem 1rem;
+      background: #238636;
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    #password-overlay button:hover {
+      background: #2ea043;
+    }
+    #password-error {
+      color: #f85149;
+      font-size: .875rem;
+      margin-top: .75rem;
+      display: none;
+    }
+    #content { display: none; }
   </style>
 </head>
 <body>
-  <div class="card">
-    <img class="avatar" src="https://github.com/yaofu.png" alt="avatar">
-    <h1><a href="https://github.com/yaofu">yaofu</a></h1>
-    <p class="tagline">usage &middot; data playground</p>
-
-    <div class="section">
-      <h2>Projects</h2>
-      <ul class="project-list">
-        <li>
-          <a href="https://github.com/yaofu/usage">usage</a>
-          <div class="desc">Usage data analysis with Streamlit</div>
-        </li>
-      </ul>
-    </div>
-
-    <div class="footer">
-      <a href="https://github.com/yaofu/usage">source</a>
+  <div id="password-overlay">
+    <div class="card">
+      <input type="password" id="password-input" placeholder="Password" autofocus>
+      <button id="password-submit">Enter</button>
+      <p id="password-error">Incorrect password</p>
     </div>
   </div>
+
+  <div id="content">
+    <div class="card">
+      <div class="section" id="plots-section">
+        <h2 style="font-size:2rem;">Omara lab supercomputer usage</h2>
+        <p id="plot-date" style="color:#a8a8a8;margin-bottom:1rem;text-align:center;"></p>
+        <div id="plot-container" style="width:100%;margin-top:2rem;"></div>
+        <p id="plot-error" style="color:#f85149;display:none;"></p>
+      </div>
+
+      <div class="footer">
+        <a href="https://github.com/BSB47/BSB47.github.io">source</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const overlay = document.getElementById('password-overlay');
+    const input = document.getElementById('password-input');
+    const submit = document.getElementById('password-submit');
+    const error = document.getElementById('password-error');
+    const content = document.getElementById('content');
+    const password = 'Berendsen';
+
+    function checkPassword() {
+      if (input.value === password) {
+        overlay.style.display = 'none';
+        content.style.display = 'block';
+      } else {
+        error.style.display = 'block';
+        input.value = '';
+        input.focus();
+      }
+    }
+
+    submit.addEventListener('click', checkPassword);
+    input.addEventListener('keydown', (e) => { if (e.key === 'Enter') checkPassword(); });
+
+    async function loadPlot() {
+      const container = document.getElementById('plot-container');
+      const dateEl = document.getElementById('plot-date');
+      const errEl = document.getElementById('plot-error');
+      const today = new Date();
+      for (let rewind = 0; rewind < 30; rewind++) {
+        const d = new Date(today);
+        d.setDate(d.getDate() - rewind);
+        const dateStr = d.toISOString().slice(0, 10);
+        const url = `plots/${dateStr}_usage.svg`;
+        const ok = await new Promise(resolve => {
+          const img = new Image();
+          img.onload = () => resolve(true);
+          img.onerror = () => resolve(false);
+          img.src = url;
+        });
+        if (ok) {
+          container.innerHTML = `<img src="${url}" style="width:100%;height:auto;">`;
+          dateEl.textContent = `Rendering data from ${dateStr} (most recent available)`;
+          return;
+        }
+      }
+      errEl.style.display = 'block';
+      errEl.textContent = 'No data found for the last 30 days.';
+    }
+
+    loadPlot();
+  </script>
 </body>
 </html>
