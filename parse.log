@@ -59,3 +59,4 @@ Traceback (most recent call last):
     data_raw_cpu["remaining"] = allocation["pawsey0420"] - used_cpu["pawsey0420"]
                                 ~~~~~~~~~~^^^^^^^^^^^^^^
 KeyError: 'pawsey0420'
+Warning: exeeding allocation on Setonix CPU by 152.4%
