@@ -18,7 +18,7 @@
     .card {
       background: #FFFFFF;
       padding: 1rem 2rem 2rem 2rem;
-      max-width: 1200px;
+      max-width: 1400px;
       width: 100%;
       text-align: center;
     }
@@ -183,29 +183,21 @@
       }
 
       const historyUrl = 'plots/history_usage.svg';
-      let showingHistory = false;
 
       function showDaily() {
-        container.innerHTML = `<img src="${dailyUrl}" style="max-width:100%;height:auto;cursor:pointer;">`;
-        dateEl.textContent = `Rendering data from ${dailyDate} (most recent available) · click to view history`;
-        showingHistory = false;
+        container.innerHTML = `<img src="${dailyUrl}" style="max-width:100%;height:auto;">`;
+        dateEl.textContent = `Rendering data from ${dailyDate} (most recent available) · hover to see 15-day history`;
       }
 
       function showHistory() {
-        container.innerHTML = `<img src="${historyUrl}" style="max-width:100%;height:auto;cursor:pointer;">`;
-        dateEl.textContent = `Usage over the past 15 days · click to view today`;
-        showingHistory = true;
+        container.innerHTML = `<img src="${historyUrl}" style="max-width:100%;height:auto;">`;
+        dateEl.textContent = `Usage over the past 15 days`;
       }
 
       showDaily();
 
-      container.addEventListener('click', () => {
-        if (showingHistory) {
-          showDaily();
-        } else {
-          showHistory();
-        }
-      });
+      container.addEventListener('mouseenter', showHistory);
+      container.addEventListener('mouseleave', showDaily);
     }
 
     loadPlot();

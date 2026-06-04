@@ -135,7 +135,7 @@ def plot_history(date_range: tuple[str, str], cluster: str, ax):
             date_dicts[date] = parse_fn(
                 f"/home/yaofu/usage/data/{date}_{base_cluster.lower()}_usage.txt"
             )[indices_of_percent_used]
-        except FileNotFoundError:
+        except (FileNotFoundError, KeyError):
             continue
 
     date_with_max_keys = max(date_dicts.keys(), key=lambda d: len(date_dicts[d].keys()))
@@ -248,7 +248,7 @@ if __name__ == "__main__":
                 print(f"No data found for {date}. Trying previous day...")
         rewind += 1
 
-    fig, axs = plt.subplots(1, 3, figsize=(18, 8), dpi=100)
+    fig, axs = plt.subplots(1, 3, figsize=(20, 10), dpi=200)
 
     plot(gadi_raw, gadi_percent, date, "Gadi", axs[0], threshold=threshold)
     plot(
@@ -270,7 +270,7 @@ if __name__ == "__main__":
     plt.tight_layout()
     plt.savefig(f"{path}/plots/{date}_usage.svg", bbox_inches="tight")
 
-    fig, axs = plt.subplots(1, 3, figsize=(18, 9), dpi=200)
+    fig, axs = plt.subplots(1, 3, figsize=(20, 9.9), dpi=200)
     start_date = (datetime.now() - timedelta(days=15)).strftime("%Y-%m-%d")
     end_date = datetime.now().strftime("%Y-%m-%d")
     plot_history((start_date, end_date), "Gadi", axs[0])
