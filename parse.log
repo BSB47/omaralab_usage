@@ -114,3 +114,19 @@ Traceback (most recent call last):
     data_raw["remaining"] = total[0][0] - total[1][0]
                             ~~~~~^^^
 IndexError: list index out of range
+Contents of the data file for 2026-06-10 is empty or corrupted.                 Supercomputers may be down for maintenance.                Is it the first Tuesday of the month? If not, contact Frank
+Contents of the data file for 2026-06-09 is empty or corrupted.                 Supercomputers may be down for maintenance.                Is it the first Tuesday of the month? If not, contact Frank
+Contents of the data file for 2026-06-08 is empty or corrupted.                 Supercomputers may be down for maintenance.                Is it the first Tuesday of the month? If not, contact Frank
+Contents of the data file for 2026-06-07 is empty or corrupted.                 Supercomputers may be down for maintenance.                Is it the first Tuesday of the month? If not, contact Frank
+Contents of the data file for 2026-06-06 is empty or corrupted.                 Supercomputers may be down for maintenance.                Is it the first Tuesday of the month? If not, contact Frank
+Warning: exeeding allocation on Setonix CPU by 152.4%
+Traceback (most recent call last):
+  File "/home/yaofu/usage/parse.py", line 276, in <module>
+    plot_history((start_date, end_date), "Gadi", axs[0])
+  File "/home/yaofu/usage/parse.py", line 135, in plot_history
+    date_dicts[date] = parse_fn(
+                       ^^^^^^^^^
+  File "/home/yaofu/usage/parse.py", line 106, in parse_gadi_usage
+    data_raw["remaining"] = total[0][0] - total[1][0]
+                            ~~~~~^^^
+IndexError: list index out of range
