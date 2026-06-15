@@ -201,3 +201,5 @@ Traceback (most recent call last):
     data_raw["remaining"] = total[0][0] - total[1][0]
                             ~~~~~^^^
 IndexError: list index out of range
+Warning: exeeding allocation on Setonix CPU by 152.5%
+Warning: exeeding allocation on Setonix GPU by 12.0%
