@@ -135,7 +135,7 @@ def plot_history(date_range: tuple[str, str], cluster: str, ax):
             date_dicts[date] = parse_fn(
                 f"/home/yaofu/usage/data/{date}_{base_cluster.lower()}_usage.txt"
             )[indices_of_percent_used]
-        except (FileNotFoundError, KeyError):
+        except (FileNotFoundError, KeyError, IndexError):
             continue
 
     date_with_max_keys = max(date_dicts.keys(), key=lambda d: len(date_dicts[d].keys()))
