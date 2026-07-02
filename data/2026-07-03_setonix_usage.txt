@@ -1,0 +1,9 @@
+Compute Information
+-------------------
+          Project ID     Allocation          Usage     % used       High     % high
+          ----------     ----------          -----     ------       ----     ------
+          pawsey0420        1875000          61628        3.3          0        0.0
+             --aks19                         61464        3.3          0        0.0
+               --yfu                           163        0.0          0        0.0
+      pawsey0420-gpu        1600000            114        0.0          0        0.0
+              --yhao                           114        0.0          0        0.0
