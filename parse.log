@@ -232,3 +232,5 @@ Warning: exeeding allocation on Setonix GPU by 33.5%
 Warning: exeeding allocation on Setonix CPU by 152.5%
 Warning: exeeding allocation on Setonix GPU by 33.5%
 Contents of the data file for 2026-07-12 is empty or corrupted.                 Supercomputers may be down for maintenance.                Is it the first Tuesday of the month? If not, contact Frank
+/home/yaofu/usage/parse.py:279: UserWarning: Tight layout not applied. The bottom and top margins cannot be made large enough to accommodate all Axes decorations.
+  plt.tight_layout()
