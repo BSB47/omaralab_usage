@@ -236,3 +236,4 @@ Contents of the data file for 2026-07-12 is empty or corrupted.                 
   plt.tight_layout()
 Warning: exeeding allocation on Setonix CPU by 4.2%
 Warning: exeeding allocation on Setonix CPU by 10.9%
+Warning: exeeding allocation on Setonix CPU by 27.1%
